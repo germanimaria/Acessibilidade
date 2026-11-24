@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="text-[18px]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visão Clara — Portal de Acessibilidade Digital e Tecnologia Assistiva</title>
+ 
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+ 
+  <!-- Google Fonts: Atkinson Hyperlegible (desenvolvida especificamente para baixa visão) e Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       VARIÁVEIS DE TEMA E ESTILOS BASE DE ACESSIBILIDADE
+       ========================================================================== */
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f1f5f9;
+      --bg-card: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #334155;
+      --accent-primary: #0369a1;
+      --accent-hover: #075985;
+      --accent-text: #ffffff;
+      --border-color: #cbd5e1;
+      --focus-ring: #d97706;
+      --font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
+      --line-height-base: 1.65;
+      --letter-spacing-base: 0.01em;
+      --word-spacing-base: 0.05em;
+    }
+
+    /* Tema: Alto Contraste Escuro (Preto, Branco e Amarelo) */
+    html.theme-high-contrast-dark {
+      --bg-primary: #000000;
+      --bg-secondary: #121212;
+      --bg-card: #000000;
+      --text-primary: #ffffff;
+      --text-secondary: #f8fafc;
+      --accent-primary: #ffff00;
+      --accent-hover: #fde047;
+      --accent-text: #000000;
+      --border-color: #ffffff;
+      --focus-ring: #00ffff;
+    }
+
+    /* Tema: Alto Contraste Amarelo sobre Preto */
+    html.theme-yellow-black {
+      --bg-primary: #000000;
+      --bg-secondary: #0a0a0a;
+      --bg-card: #000000;
+      --text-primary: #ffff00;
+      --text-secondary: #fef08a;
+      --accent-primary: #ffff00;
+      --accent-hover: #ffffff;
+      --accent-text: #000000;
+      --border-color: #ffff00;
+      --focus-ring: #ffffff;
+    }
+
+    /* Tema: Sépia / Conforto Visual (Redução de fotofobia) */
+    html.theme-sepia {
+      --bg-primary: #f4ecd8;
+      --bg-secondary: #e9dec4;
+      --bg-card: #fbf6ea;
+      --text-primary: #2c2216;
+      --text-secondary: #4a3b28;
+      --accent-primary: #7c2d12;
+      --accent-hover: #9a3412;
+      --accent-text: #fbf6ea;
+      --border-color: #bfa988;
+      --focus-ring: #b45309;
+    }
+
+    /* Tema: Escala de Cinza */
+    html.theme-grayscale {
+      filter: grayscale(100%);
+    }
+
+    /* Filtros SVG de Daltonismo */
+    html.filter-protanopia {
+      filter: url('#protanopia-filter');
+    }
+    html.filter-deuteranopia {
+      filter: url('#deuteranopia-filter');
+    }
+    html.filter-tritanopia {
+      filter: url('#tritanopia-filter');
+    }
+
+    /* Tipografia Especial para Baixa Visão / Dislexia */
+    html.font-hyperlegible {
+      --font-family-base: 'Atkinson Hyperlegible', Verdana, sans-serif;
+    }
+
+    /* Espaçamento Ampliado */
+    html.extra-spacing {
+      --line-height-base: 2.0;
+      --letter-spacing-base: 0.08em;
+      --word-spacing-base: 0.2em;
+    }
+
+    /* Destaque de Links e Botões */
+    html.highlight-links a,
+    html.highlight-links button {
+      text-decoration: underline !important;
+      text-decoration-thickness: 3px !important;
+      text-underline-offset: 4px !important;
+      outline: 2px solid var(--accent-primary) !important;
+      outline-offset: 2px !important;
+    }
+
+    /* Cursor Ampliado de Alto Contraste */
+    html.large-cursor,
+    html.large-cursor * {
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 32 32'%3E%3Cpath d='M4 2 L26 16 L15 19 L21 29 L16 31 L10 21 L4 27 Z' fill='%23ffff00' stroke='%23000000' stroke-width='2.5'/%3E%3C/svg%3E") 4 2, auto !important;
+    }
+
+    /* Aplicação Global das Variáveis */
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-family-base);
+      line-height: var(--line-height-base);
+      letter-spacing: var(--letter-spacing-base);
+      word-spacing: var(--word-spacing-base);
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .surface-secondary {
+      background-color: var(--bg-secondary);
+      border-color: var(--border-color);
+    }
+
+    .surface-card {
+      background-color: var(--bg-card);
+      border: 2px solid var(--border-color);
+    }
+
+    .text-muted-accessible {
+      color: var(--text-secondary);
+    }
+
+    .btn-primary-accessible {
+      background-color: var(--accent-primary);
+      color: var(--accent-text);
+      border: 2px solid var(--accent-primary);
+      font-weight: 700;
+    }
+
+    .btn-primary-accessible:hover {
+      background-color: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    .btn-outline-accessible {
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+      border: 2px solid var(--border-color);
+      font-weight: 600;
+    }
+
+    .btn-outline-accessible:hover,
+    .btn-outline-accessible[aria-pressed="true"] {
+      background-color: var(--accent-primary);
+      color: var(--accent-text);
+      border-color: var(--accent-primary);
+    }
+
+    /* Foco de Alta Visibilidade para Teclado */
+    *:focus-visible {
+      outline: 4px solid var(--focus-ring) !important;
+      outline-offset: 4px !important;
+      box-shadow: 0 0 0 6px var(--bg-primary) !important;
+    }
+
+    /* Skip Links (Visíveis ao focar via Tab) */
+    .skip-link {
+      position: absolute;
+      top: -120px;
+      left: 16px;
+      z-index: 9999;
+      background-color: var(--accent-primary);
+      color: var(--accent-text);
+      padding: 14px 24px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      border: 3px solid var(--focus-ring);
+      transition: top 0.2s ease;
+    }
+
+    .skip-link:focus {
+      top: 16px;
+    }
+
+    /* Régua / Guia de Leitura Horizontal */
+    #reading-guide {
+      position: fixed;
+      left: 0;
+      width: 100vw;
+      height: 54px;
+      pointer-events: none;
+      z-index: 9990;
+      border-top: 4px solid #ffff00;
+      border-bottom: 4px solid #ffff00;
+      background-color: rgba(255, 255, 0, 0.14);
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.35);
+      display: none;
+      transform: translateY(-50%);
+    }
+
+    html.reading-guide-active #reading-guide {
+      display: block;
+    }
+
+    /* Destaque do elemento sendo lido pelo sintetizador de voz */
+    .tts-speaking-highlight {
+      outline: 4px dashed var(--focus-ring) !important;
+      outline-offset: 4px !important;
+      background-color: rgba(250, 204, 21, 0.18) !important;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-amber-300 selection:text-black">
+
+  <!-- Filtros SVG Ocultos para Simulação/Correção de Daltonismo -->
+  <svg aria-hidden="true" class="hidden" width="0" height="0">
+    <defs>
+      <!-- Protanopia (Cegueira ao vermelho) -->
+      <filter id="protanopia-filter">
+        <feColorMatrix type="matrix" values="
+          0.567, 0.433, 0,     0, 0
+          0.558, 0.442, 0,     0, 0
+          0,     0.242, 0.758, 0, 0
+          0,     0,     0,     1, 0"/>
+      </filter>
+      <!-- Deuteranopia (Cegueira ao verde) -->
+      <filter id="deuteranopia-filter">
+        <feColorMatrix type="matrix" values="
+          0.625, 0.375, 0,   0, 0
+          0.7,   0.3,   0,   0, 0
+          0,     0.3,   0.7, 0, 0
+          0,     0,     0,   1, 0"/>
+      </filter>
+      <!-- Tritanopia (Cegueira ao azul) -->
+      <filter id="tritanopia-filter">
+        <feColorMatrix type="matrix" values="
+          0.95, 0.05,  0,     0, 0
+          0,    0.433, 0.567, 0, 0
+          0,    0.475, 0.525, 0, 0
+          0,    0,     0,     1, 0"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Régua / Guia de Leitura Horizontal -->
+  <div id="reading-guide" aria-hidden="true"></div>
+
+  <!-- Região Viva ARIA para Anúncios a Leitores de Tela -->
+  <div id="aria-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Links de Navegação Rápida (Skip Links) -->
+  <nav aria-label="Links de salto rápido">
+    <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo principal (Alt + 1)</a>
+    <a href="#barra-acessibilidade" class="skip-link" style="left: 340px;">Pular para a barra de acessibilidade (Alt + 2)</a>
+  </nav>
+
+  <!-- ========================================================================
+       BARRA DE FERRAMENTAS DE ACESSIBILIDADE PERSISTENTE
+       ======================================================================== -->
+  <aside id="barra-acessibilidade" aria-label="Barra de Ferramentas de Acessibilidade" class="surface-secondary border-b-4 sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <span class="inline-flex items-center justify-center w-10 h-10 rounded-lg btn-primary-accessible" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </span>
+          <div>
+            <span class="font-extrabold text-base block leading-tight">Painel de Acessibilidade</span>
+            <span class="text-xs text-muted-accessible">Personalize leitura, cores e voz</span>
+          </div>
+        </div>
+
+        <!-- Botão de Expandir/Recolher Painel Completo em Telas Menores ou Organização -->
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Controles Rápidos de Fonte -->
+          <div class="flex items-center gap-1.5 bg-black/5 p-1.5 rounded-xl border border-current/20" role="group" aria-label="Tamanho do texto">
+            <button type="button" id="btn-font-decrease" class="btn-outline-accessible px-3 py-2 rounded-lg text-sm min-h-[44px]" aria-label="Diminuir tamanho da fonte">
+              A- <span class="sr-only">Diminuir</span>
+            </button>
+            <span id="font-size-indicator" class="px-2 font-bold text-sm min-w-[54px] text-center" aria-live="polite">100%</span>
+            <button type="button" id="btn-font-increase" class="btn-outline-accessible px-3 py-2 rounded-lg text-sm min-h-[44px]" aria-label="Aumentar tamanho da fonte">
+              A+ <span class="sr-only">Aumentar</span>
+            </button>
+            <button type="button" id="btn-font-reset" class="btn-outline-accessible px-3 py-2 rounded-lg text-sm min-h-[44px]" aria-label="Restaurar tamanho padrão da fonte">
+              100%
+            </button>
+          </div>
+
+          <!-- Atalho Rápido Alto Contraste -->
+          <button type="button" id="btn-quick-contrast" aria-pressed="false" class="btn-outline-accessible px-4 py-2 rounded-xl text-sm flex items-center gap-2 min-h-[44px]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18m0-18a9 9 0 100 18V3z" />
+            </svg>
+            <span>Alto Contraste</span>
+          </button>
+
+          <!-- Botão Leitor de Voz Rápido -->
+          <button type="button" id="btn-tts-toggle" aria-pressed="false" class="btn-primary-accessible px-4 py-2 rounded-xl text-sm flex items-center gap-2 min-h-[44px]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            </svg>
+            <span id="tts-btn-label">Ouvir Página</span>
+          </button>
+
+          <!-- Botão Expandir Todas as Ferramentas -->
+          <button type="button" id="btn-toggle-toolbar" aria-expanded="true" aria-controls="toolbar-advanced-panel" class="btn-outline-accessible px-4 py-2 rounded-xl text-sm flex items-center gap-2 min-h-[44px]">
+            <span>Mais Opções</span>
+            <svg id="toolbar-chevron" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Painel Avançado Expansível de Acessibilidade -->
+      <div id="toolbar-advanced-panel" class="mt-4 pt-4 border-t-2 border-current/15 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+       
+        <!-- Grupo 1: Modos de Cor e Contraste -->
+        <div class="surface-card p-3 rounded-xl">
+          <h2 class="text-sm font-extrabold uppercase tracking-wider mb-2">1. Contraste e Cores</h2>
+          <div class="grid grid-cols-2 gap-2" role="group" aria-label="Temas de contraste">
+            <button type="button" data-theme="default" aria-pressed="true" class="theme-btn btn-outline-accessible px-3 py-2 rounded-lg text-xs text-left min-h-[44px]">
+              Padrão Claro
+            </button>
+            <button type="button" data-theme="high-contrast-dark" aria-pressed="false" class="theme-btn btn-outline-accessible px-3 py-2 rounded-lg text-xs text-left min-h-[44px]">
+              Escuro Contraste
+            </button>
+            <button type="button" data-theme="yellow-black" aria-pressed="false" class="theme-btn btn-outline-accessible px-3 py-2 rounded-lg text-xs text-left min-h-[44px]">
+              Amarelo / Preto
+            </button>
+            <button type="button" data-theme="sepia" aria-pressed="false" class="theme-btn btn-outline-accessible px-3 py-2 rounded-lg text-xs text-left min-h-[44px]">
+              Sépia (Fotofobia)
+            </button>
+            <button type="button" id="btn-grayscale" aria-pressed="false" class="btn-outline-accessible px-3 py-2 rounded-lg text-xs text-left col-span-2 min-h-[44px]">
+              Escala de Cinza (Monocromático)
+            </button>
+          </div>
+        </div>
+
+        <!-- Grupo 2: Filtros para Daltonismo -->
+        <div class="surface-card p-3 rounded-xl">
+          <h2 class="text-sm font-extrabold uppercase tracking-wider mb-2">2. Filtros de Daltonismo</h2>
+          <div class="grid grid-cols-2 gap-2" role="group" aria-label="Filtros de daltonismo">
+            <button type="button" data-daltonism="none" aria-pressed="true" class="daltonism-btn btn-outline-accessible px-3 py-2 rounded-lg text-xs text-left min-h-[44px]">
+              Sem Filtro
+            </button>
+            <button type="button" data-daltonism="protanopia" aria-pressed="false" class="daltonism-btn btn-outline-accessible px-3 py-2 rounded-lg text-xs text-left min-h-[44px]">
+              Protanopia
+            </button>
+            <button type="button" data-daltonism="deuteranopia" aria-pressed="false" class="daltonism-btn btn-outline-accessible px-3 py-2 rounded-lg text-xs text-left min-h-[44px]">
+              Deuteranopia
+            </button>
+            <button type="button" data-daltonism="tritanopia" aria-pressed="false" class="daltonism-btn btn-outline-accessible px-3 py-2 rounded-lg text-xs text-left min-h-[44px]">
+              Tritanopia
+            </button>
+          </div>
+        </div>
+
+        <!-- Grupo 3: Tipografia e Auxílio Visual -->
+        <div class="surface-card p-3 rounded-xl">
+          <h2 class="text-sm font-extrabold uppercase tracking-wider mb-2">3. Leitura e Cursor</h2>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" id="btn-hyperlegible" aria-pressed="false" class="btn-outline-accessible px-3 py-2 rounded-lg text-xs text-left min-h-[44px]">
+              Fonte Baixa Visão
+            </button>
+            <button type="button" id="btn-spacing" aria-pressed="false" class="btn-outline-accessible px-3 py-2 rounded-lg text-xs text-left min-h-[44px]">
+              Espaçamento +
+            </button>
+            <button type="button" id="btn-highlight-links" aria-pressed="false" class="btn-outline-accessible px-3 py-2 rounded-lg text-xs text-left min-h-[44px]">
+              Destacar Links
+            </button>
+            <button type="button" id="btn-reading-guide" aria-pressed="false" class="btn-outline-accessible px-3 py-2 rounded-lg text-xs text-left min-h-[44px]">
+              Régua de Leitura
+            </button>
+            <button type="button" id="btn-large-cursor" aria-pressed="false" class="btn-outline-accessible px-3 py-2 rounded-lg text-xs text-left col-span-2 min-h-[44px]">
+              Cursor Ampliado de Alto Contraste
+            </button>
+          </div>
+        </div>
+
+        <!-- Grupo 4: Síntese de Voz e Reset -->
+        <div class="surface-card p-3 rounded-xl flex flex-col justify-between">
+          <div>
+            <h2 class="text-sm font-extrabold uppercase tracking-wider mb-2">4. Leitor de Voz (PT-BR)</h2>
+            <div class="flex flex-col gap-2">
+              <button type="button" id="btn-hover-speak" aria-pressed="false" class="btn-outline-accessible px-3 py-2 rounded-lg text-xs text-left min-h-[44px]">
+                Ler ao Focar / Passar Mouse
+              </button>
+              <div class="flex items-center gap-1" role="group" aria-label="Velocidade da fala">
+                <span class="text-xs font-bold mr-1">Velocidade:</span>
+                <button type="button" data-rate="0.75" aria-pressed="false" class="rate-btn btn-outline-accessible px-2 py-1.5 rounded text-xs flex-1 min-h-[38px]">Lenta</button>
+                <button type="button" data-rate="1" aria-pressed="true" class="rate-btn btn-outline-accessible px-2 py-1.5 rounded text-xs flex-1 min-h-[38px]">Normal</button>
+                <button type="button" data-rate="1.35" aria-pressed="false" class="rate-btn btn-outline-accessible px-2 py-1.5 rounded text-xs flex-1 min-h-[38px]">Rápida</button>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" id="btn-reset-all" class="mt-3 w-full bg-red-700 hover:bg-red-800 text-white font-bold py-2.5 px-3 rounded-lg text-xs flex items-center justify-center gap-2 min-h-[44px]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Resetar Todas as Preferências</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       CABEÇALHO PRINCIPAL E NAVEGAÇÃO
+       ======================================================================== -->
+  <header class="border-b-2 border-current/15 py-6">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl btn-primary-accessible flex items-center justify-center shrink-0" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </div>
+        <div>
+          <a href="#" class="text-2xl md:text-3xl font-extrabold tracking-tight block">Visão Clara</a>
+          <p class="text-sm md:text-base text-muted-accessible">Portal de Acessibilidade Digital e Tecnologia Assistiva</p>
+        </div>
+      </div>
+
+      <nav aria-label="Navegação Principal do Portal">
+        <ul class="flex flex-wrap gap-3">
+          <li><a href="#recursos-assistivos" class="btn-outline-accessible px-4 py-3 rounded-xl inline-block text-base">Recursos Assistivos</a></li>
+          <li><a href="#simulador-contraste" class="btn-outline-accessible px-4 py-3 rounded-xl inline-block text-base">Simulador WCAG</a></li>
+          <li><a href="#atalhos-teclado" class="btn-outline-accessible px-4 py-3 rounded-xl inline-block text-base">Atalhos</a></li>
+          <li><a href="#contato-acessivel" class="btn-outline-accessible px-4 py-3 rounded-xl inline-block text-base">Feedback</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       CONTEÚDO PRINCIPAL
+       ======================================================================== -->
+  <main id="conteudo-principal" tabindex="-1" class="max-w-6xl mx-auto px-4 py-10 space-y-16">
+
+    <!-- SEÇÃO HERO -->
+    <section aria-labelledby="hero-heading" class="surface-secondary p-8 md:p-12 rounded-3xl border-2">
+      <div class="max-w-4xl space-y-6">
+        <span class="inline-block px-4 py-1.5 rounded-full text-sm font-extrabold uppercase tracking-wider btn-primary-accessible">
+          Conformidade WCAG 2.2 Nível AAA
+        </span>
+        <h1 id="hero-heading" class="text-3xl md:text-5xl font-extrabold leading-tight">
+          A Web projetada para ser vista, ouvida e navegada por todas as pessoas.
+        </h1>
+        <p class="text-lg md:text-xl text-muted-accessible leading-relaxed">
+          O <strong>Visão Clara</strong> é um portal educativo e interativo criado especialmente para pessoas com baixa sensibilidade visual, baixa visão, daltonismo, fotofobia ou cegueira. Experimente os controles na barra superior para adaptar cores, tipografia, leitura em voz alta e navegação por teclado em tempo real.
+        </p>
+        <div class="flex flex-wrap gap-4 pt-2">
+          <a href="#recursos-assistivos" class="btn-primary-accessible px-6 py-4 rounded-2xl text-lg inline-flex items-center gap-3">
+            <span>Explorar Tecnologias Assistivas</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </a>
+          <button type="button" id="btn-hero-listen" class="btn-outline-accessible px-6 py-4 rounded-2xl text-lg inline-flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Ouvir Apresentação</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 1: FERRAMENTAS E RECURSOS PARA BAIXA VISÃO -->
+    <section id="recursos-assistivos" aria-labelledby="recursos-heading" class="space-y-8">
+      <div class="space-y-3">
+        <h2 id="recursos-heading" class="text-2xl md:text-4xl font-extrabold">
+          Ferramentas e Recursos para Baixa Visão
+        </h2>
+        <p class="text-lg text-muted-accessible max-w-3xl">
+          Conheça as principais tecnologias assistivas e diretrizes de design que garantem autonomia digital para pessoas com deficiência visual.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Card 1 -->
+        <article class="surface-card p-6 md:p-8 rounded-2xl space-y-4 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl btn-primary-accessible flex items-center justify-center shrink-0" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                </svg>
+              </div>
+              <h3 class="text-xl md:text-2xl font-bold">Ampliadores de Tela e Zoom Fluido</h3>
+            </div>
+            <p class="text-muted-accessible">
+              Softwares como <strong>ZoomText</strong>, <strong>Lupa do Windows</strong> e o <strong>Zoom do macOS</strong> ampliam áreas específicas da tela em até 1600%. Sites acessíveis devem suportar zoom de 200% no navegador sem perda de conteúdo ou necessidade de rolagem horizontal.
+            </p>
+          </div>
+          <div class="pt-4 border-t border-current/15">
+            <button type="button" class="speak-section-btn btn-outline-accessible px-4 py-2.5 rounded-xl text-sm inline-flex items-center gap-2">
+              <span aria-hidden="true">🔊</span>
+              <span>Ouvir este card</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="surface-card p-6 md:p-8 rounded-2xl space-y-4 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl btn-primary-accessible flex items-center justify-center shrink-0" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+              </div>
+              <h3 class="text-xl md:text-2xl font-bold">Leitores de Tela (NVDA, JAWS e VoiceOver)</h3>
+            </div>
+            <p class="text-muted-accessible">
+              Leitores de tela convertem elementos visuais em síntese de voz ou saída em Braille. Para funcionarem perfeitamente, exigem HTML semântico rigoroso, hierarquia lógica de cabeçalhos (H1 a H6), textos alternativos descritivos e atributos ARIA bem estruturados.
+            </p>
+          </div>
+          <div class="pt-4 border-t border-current/15">
+            <button type="button" class="speak-section-btn btn-outline-accessible px-4 py-2.5 rounded-xl text-sm inline-flex items-center gap-2">
+              <span aria-hidden="true">🔊</span>
+              <span>Ouvir este card</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="surface-card p-6 md:p-8 rounded-2xl space-y-4 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl btn-primary-accessible flex items-center justify-center shrink-0" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                </svg>
+              </div>
+              <h3 class="text-xl md:text-2xl font-bold">Contraste Cromático WCAG AAA</h3>
+            </div>
+            <p class="text-muted-accessible">
+              Pessoas com baixa sensibilidade ao contraste (como em casos de catarata, glaucoma ou retinopatia diabética) precisam de diferença acentuada entre texto e fundo. O nível AAA exige proporção mínima de <strong>7:1</strong> para textos normais e <strong>4.5:1</strong> para textos grandes.
+            </p>
+          </div>
+          <div class="pt-4 border-t border-current/15">
+            <button type="button" class="speak-section-btn btn-outline-accessible px-4 py-2.5 rounded-xl text-sm inline-flex items-center gap-2">
+              <span aria-hidden="true">🔊</span>
+              <span>Ouvir este card</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- Card 4 -->
+        <article class="surface-card p-6 md:p-8 rounded-2xl space-y-4 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl btn-primary-accessible flex items-center justify-center shrink-0" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h3 class="text-xl md:text-2xl font-bold">Tipografia Hiperlegível e Espaçamento</h3>
+            </div>
+            <p class="text-muted-accessible">
+              Fontes como a <strong>Atkinson Hyperlegible</strong> diferenciam claramente caracteres semelhantes (como "I" maiúsculo, "l" minúsculo e o número "1"). Combinadas com entrelinhas amplas e réguas de leitura, reduzem drasticamente a fadiga ocular.
+            </p>
+          </div>
+          <div class="pt-4 border-t border-current/15">
+            <button type="button" class="speak-section-btn btn-outline-accessible px-4 py-2.5 rounded-xl text-sm inline-flex items-center gap-2">
+              <span aria-hidden="true">🔊</span>
+              <span>Ouvir este card</span>
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 2: SIMULADOR INTERATIVO DE CONTRASTE WCAG -->
+    <section id="simulador-contraste" aria-labelledby="simulador-heading" class="surface-secondary p-6 md:p-10 rounded-3xl border-2 space-y-8">
+      <div class="space-y-3">
+        <h2 id="simulador-heading" class="text-2xl md:text-4xl font-extrabold">
+          Simulador de Contraste WCAG em Tempo Real
+        </h2>
+        <p class="text-lg text-muted-accessible max-w-3xl">
+          Teste combinações de cores de texto e fundo para verificar se atendem aos critérios internacionais de legibilidade para pessoas com baixa visão.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- Controles do Simulador -->
+        <div class="lg:col-span-5 surface-card p-6 rounded-2xl space-y-6">
+          <div class="space-y-2">
+            <label for="input-fg-color" class="block font-bold text-base">
+              Cor do Texto (Primeiro Plano):
+            </label>
+            <div class="flex items-center gap-3">
+              <input type="color" id="input-fg-color" value="#ffff00" class="w-16 h-12 rounded-lg border-2 border-current cursor-pointer">
+              <input type="text" id="input-fg-hex" value="#FFFF00" maxlength="7" aria-label="Código hexadecimal da cor do texto" class="surface-secondary px-4 py-2.5 rounded-xl border-2 font-mono uppercase w-full">
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label for="input-bg-color" class="block font-bold text-base">
+              Cor do Fundo (Segundo Plano):
+            </label>
+            <div class="flex items-center gap-3">
+              <input type="color" id="input-bg-color" value="#000000" class="w-16 h-12 rounded-lg border-2 border-current cursor-pointer">
+              <input type="text" id="input-bg-hex" value="#000000" maxlength="7" aria-label="Código hexadecimal da cor de fundo" class="surface-secondary px-4 py-2.5 rounded-xl border-2 font-mono uppercase w-full">
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2 pt-2">
+            <button type="button" id="btn-swap-colors" class="btn-outline-accessible px-4 py-3 rounded-xl text-sm flex items-center gap-2">
+              <span aria-hidden="true">⇄</span>
+              <span>Inverter Cores</span>
+            </button>
+            <button type="button" data-preset-fg="#0F172A" data-preset-bg="#FFFFFF" class="preset-contrast-btn btn-outline-accessible px-3 py-3 rounded-xl text-sm">
+              Azul Escuro / Branco
+            </button>
+            <button type="button" data-preset-fg="#777777" data-preset-bg="#EEEEEE" class="preset-contrast-btn btn-outline-accessible px-3 py-3 rounded-xl text-sm">
+              Baixo Contraste (Exemplo Ruim)
+            </button>
+          </div>
+        </div>
+
+        <!-- Resultado Visual e Métricas WCAG -->
+        <div class="lg:col-span-7 space-y-6">
+          <div id="contrast-preview-box" class="p-8 rounded-2xl border-4 border-current transition-colors" style="background-color: #000000; color: #ffff00;">
+            <p class="text-sm font-bold uppercase tracking-wider mb-2">Pré-visualização de Leitura</p>
+            <h3 class="text-2xl md:text-3xl font-extrabold mb-3">
+              Exemplo de Título com Alto Contraste
+            </h3>
+            <p class="text-lg leading-relaxed">
+              Este parágrafo demonstra como uma pessoa com baixa sensibilidade visual enxerga a combinação escolhida. Um bom contraste evita esforço visual e garante leitura confortável.
+            </p>
+          </div>
+
+          <div class="surface-card p-6 rounded-2xl grid grid-cols-1 sm:grid-cols-3 gap-4 items-center" aria-live="polite">
+            <div>
+              <span class="text-sm text-muted-accessible block">Taxa de Contraste:</span>
+              <strong id="contrast-ratio-value" class="text-3xl font-extrabold">19.56 : 1</strong>
+            </div>
+            <div>
+              <span class="text-sm text-muted-accessible block">Texto Normal (WCAG):</span>
+              <span id="wcag-normal-badge" class="inline-block mt-1 px-3 py-1 rounded-lg font-extrabold text-sm bg-emerald-700 text-white">
+                APROVADO AAA (≥ 7:1)
+              </span>
+            </div>
+            <div>
+              <span class="text-sm text-muted-accessible block">Texto Grande (≥ 24px):</span>
+              <span id="wcag-large-badge" class="inline-block mt-1 px-3 py-1 rounded-lg font-extrabold text-sm bg-emerald-700 text-white">
+                APROVADO AAA (≥ 4.5:1)
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 3: GUIA PRÁTICO DE ATALHOS DE TECLADO -->
+    <section id="atalhos-teclado" aria-labelledby="atalhos-heading" class="space-y-6">
+      <div class="space-y-3">
+        <h2 id="atalhos-heading" class="text-2xl md:text-4xl font-extrabold">
+          Guia de Atalhos de Teclado do Portal
+        </h2>
+        <p class="text-lg text-muted-accessible max-w-3xl">
+          Navegue por todo o site sem precisar usar o mouse. Utilize as teclas abaixo para acionar recursos instantaneamente:
+        </p>
+      </div>
+
+      <div class="surface-card rounded-2xl overflow-hidden">
+        <table class="w-full text-left border-collapse">
+          <caption class="sr-only">Lista de atalhos de teclado disponíveis no portal Visão Clara</caption>
+          <thead class="surface-secondary border-b-2">
+            <tr>
+              <th scope="col" class="p-4 md:p-5 font-extrabold text-base md:text-lg">Combinação de Teclas</th>
+              <th scope="col" class="p-4 md:p-5 font-extrabold text-base md:text-lg">Ação Executada</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y-2 divide-current/15">
+            <tr>
+              <td class="p-4 md:p-5 font-mono font-bold"><kbd class="px-3 py-1.5 rounded-lg surface-secondary border-2">Alt</kbd> + <kbd class="px-3 py-1.5 rounded-lg surface-secondary border-2">1</kbd></td>
+              <td class="p-4 md:p-5">Ir diretamente para o Conteúdo Principal</td>
+            </tr>
+            <tr>
+              <td class="p-4 md:p-5 font-mono font-bold"><kbd class="px-3 py-1.5 rounded-lg surface-secondary border-2">Alt</kbd> + <kbd class="px-3 py-1.5 rounded-lg surface-secondary border-2">2</kbd></td>
+              <td class="p-4 md:p-5">Ir para a Barra de Acessibilidade</td>
+            </tr>
+            <tr>
+              <td class="p-4 md:p-5 font-mono font-bold"><kbd class="px-3 py-1.5 rounded-lg surface-secondary border-2">Alt</kbd> + <kbd class="px-3 py-1.5 rounded-lg surface-secondary border-2">C</kbd></td>
+              <td class="p-4 md:p-5">Alternar Modo de Alto Contraste Escuro</td>
+            </tr>
+            <tr>
+              <td class="p-4 md:p-5 font-mono font-bold"><kbd class="px-3 py-1.5 rounded-lg surface-secondary border-2">Alt</kbd> + <kbd class="px-3 py-1.5 rounded-lg surface-secondary border-2">L</kbd></td>
+              <td class="p-4 md:p-5">Iniciar ou Parar Leitura da Página em Voz Alta</td>
+            </tr>
+            <tr>
+              <td class="p-4 md:p-5 font-mono font-bold"><kbd class="px-3 py-1.5 rounded-lg surface-secondary border-2">Alt</kbd> + <kbd class="px-3 py-1.5 rounded-lg surface-secondary border-2">+</kbd> / <kbd class="px-3 py-1.5 rounded-lg surface-secondary border-2">-</kbd></td>
+              <td class="p-4 md:p-5">Aumentar ou Diminuir o Tamanho da Fonte</td>
+            </tr>
+            <tr>
+              <td class="p-4 md:p-5 font-mono font-bold"><kbd class="px-3 py-1.5 rounded-lg surface-secondary border-2">Alt</kbd> + <kbd class="px-3 py-1.5 rounded-lg surface-secondary border-2">R</kbd></td>
+              <td class="p-4 md:p-5">Ativar ou Desativar a Régua / Guia de Leitura</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 4: FORMULÁRIO DE CONTATO E FEEDBACK ACESSÍVEL -->
+    <section id="contato-acessivel" aria-labelledby="contato-heading" class="surface-secondary p-6 md:p-10 rounded-3xl border-2 space-y-6">
+      <div class="space-y-3 max-w-3xl">
+        <h2 id="contato-heading" class="text-2xl md:text-4xl font-extrabold">
+          Envie seu Feedback de Acessibilidade
+        </h2>
+        <p class="text-lg text-muted-accessible">
+          Encontrou alguma barreira de navegação ou tem sugestões de melhoria? Preencha o formulário abaixo. Todos os campos possuem validação acessível anunciada por voz e texto.
+        </p>
+      </div>
+
+      <form id="accessible-feedback-form" novalidate class="max-w-3xl space-y-6">
+        <!-- Campo Nome -->
+        <div class="space-y-2">
+          <label for="field-name" class="block font-bold text-lg">
+            Seu Nome Completo <span class="text-red-600 font-extrabold" aria-hidden="true">*</span>
+            <span class="sr-only">(obrigatório)</span>
+          </label>
+          <input type="text" id="field-name" name="name" required aria-required="true" aria-describedby="error-name" placeholder="Ex: Maria da Silva" class="surface-card w-full px-4 py-3.5 rounded-xl text-lg">
+          <p id="error-name" role="alert" class="text-red-600 font-bold text-base hidden"></p>
+        </div>
+
+        <!-- Campo E-mail -->
+        <div class="space-y-2">
+          <label for="field-email" class="block font-bold text-lg">
+            Seu E-mail para Resposta <span class="text-red-600 font-extrabold" aria-hidden="true">*</span>
+            <span class="sr-only">(obrigatório)</span>
+          </label>
+          <input type="email" id="field-email" name="email" required aria-required="true" aria-describedby="error-email" placeholder="Ex: maria@exemplo.com.br" class="surface-card w-full px-4 py-3.5 rounded-xl text-lg">
+          <p id="error-email" role="alert" class="text-red-600 font-bold text-base hidden"></p>
+        </div>
+
+        <!-- Campo Tecnologia Assistiva Utilizada -->
+        <div class="space-y-2">
+          <label for="field-assistive" class="block font-bold text-lg">
+            Qual recurso assistivo você utiliza? (Opcional)
+          </label>
+          <select id="field-assistive" name="assistive" class="surface-card w-full px-4 py-3.5 rounded-xl text-lg">
+            <option value="nenhum">Nenhum / Apenas zoom do navegador</option>
+            <option value="nvda">Leitor de Tela NVDA</option>
+            <option value="voiceover">Apple VoiceOver</option>
+            <option value="jaws">Leitor de Tela JAWS</option>
+            <option value="lupa">Lupa / Ampliador de Tela</option>
+            <option value="alto-contraste">Modo de Alto Contraste do Sistema</option>
+          </select>
+        </div>
+
+        <!-- Campo Mensagem -->
+        <div class="space-y-2">
+          <label for="field-message" class="block font-bold text-lg">
+            Sua Mensagem ou Sugestão <span class="text-red-600 font-extrabold" aria-hidden="true">*</span>
+            <span class="sr-only">(obrigatório)</span>
+          </label>
+          <textarea id="field-message" name="message" rows="4" required aria-required="true" aria-describedby="error-message" placeholder="Descreva sua experiência de navegação no portal..." class="surface-card w-full px-4 py-3.5 rounded-xl text-lg"></textarea>
+          <p id="error-message" role="alert" class="text-red-600 font-bold text-base hidden"></p>
+        </div>
+
+        <button type="submit" class="btn-primary-accessible px-8 py-4 rounded-2xl text-lg inline-flex items-center gap-3">
+          <span>Enviar Mensagem Acessível</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </button>
+
+        <!-- Caixa de Feedback de Envio (Substitui alert()) -->
+        <div id="form-status-box" role="status" aria-live="polite" class="hidden p-5 rounded-2xl border-2 font-bold text-lg"></div>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       RODAPÉ SEMÂNTICO
+       ======================================================================== -->
+  <footer class="border-t-4 border-current/20 py-10 mt-16 surface-secondary">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div class="space-y-2">
+        <p class="font-extrabold text-xl">Visão Clara — Inclusão Digital sem Barreiras</p>
+        <p class="text-muted-accessible text-base">
+          Desenvolvido seguindo as diretrizes WCAG 2.2 AAA e eMAG (Modelo de Acessibilidade em Governo Eletrônico).
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a href="#conteudo-principal" class="btn-outline-accessible px-4 py-3 rounded-xl text-base">
+          Voltar ao Topo
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       SCRIPT COMPLETO DE ACESSIBILIDADE, VOZ E SIMULADOR WCAG
+       ======================================================================== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Estado padrão de preferências
+      const defaultPrefs = {
+        fontScale: 100, // em %
+        theme: 'default', // default, high-contrast-dark, yellow-black, sepia
+        grayscale: false,
+        daltonism: 'none', // none, protanopia, deuteranopia, tritanopia
+        hyperlegible: false,
+        extraSpacing: false,
+        highlightLinks: false,
+        readingGuide: false,
+        largeCursor: false,
+        hoverSpeak: false,
+        speechRate: 1
+      };
+
+      // Carregar preferências do localStorage com segurança
+      let prefs = { ...defaultPrefs };
+      try {
+        const saved = localStorage.getItem('visaoClaraPrefs');
+        if (saved) {
+          prefs = { ...defaultPrefs, ...JSON.parse(saved) };
+        }
+      } catch (e) {
+        console.warn('Não foi possível ler o localStorage:', e);
+      }
+
+      const htmlEl = document.documentElement;
+      const announcer = document.getElementById('aria-announcer');
+
+      // Função para anunciar mudanças para leitores de tela
+      function announce(message) {
+        announcer.textContent = '';
+        setTimeout(() => {
+          announcer.textContent = message;
+        }, 50);
+      }
+
+      // Salvar preferências no localStorage
+      function savePrefs() {
+        try {
+          localStorage.setItem('visaoClaraPrefs', JSON.stringify(prefs));
+        } catch (e) {
+          console.warn('Erro ao salvar preferências:', e);
+        }
+      }
+
+      // Aplicar todas as preferências visuais na interface
+      function applyPreferences() {
+        // 1. Tamanho da fonte (base 18px * escala)
+        const basePx = 18 * (prefs.fontScale / 100);
+        htmlEl.style.fontSize = `${basePx}px`;
+        document.getElementById('font-size-indicator').textContent = `${prefs.fontScale}%`;
+
+        // 2. Temas de cor
+        htmlEl.classList.remove('theme-high-contrast-dark', 'theme-yellow-black', 'theme-sepia');
+        if (prefs.theme !== 'default') {
+          htmlEl.classList.add(`theme-${prefs.theme}`);
+        }
+
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+          const isActive = btn.dataset.theme === prefs.theme;
+          btn.setAttribute('aria-pressed', isActive);
+        });
+
+        const quickContrastBtn = document.getElementById('btn-quick-contrast');
+        quickContrastBtn.setAttribute('aria-pressed', prefs.theme === 'high-contrast-dark');
+
+        // 3. Escala de cinza e Daltonismo
+        htmlEl.classList.toggle('theme-grayscale', prefs.grayscale);
+        document.getElementById('btn-grayscale').setAttribute('aria-pressed', prefs.grayscale);
+
+        htmlEl.classList.remove('filter-protanopia', 'filter-deuteranopia', 'filter-tritanopia');
+        if (prefs.daltonism !== 'none') {
+          htmlEl.classList.add(`filter-${prefs.daltonism}`);
+        }
+        document.querySelectorAll('.daltonism-btn').forEach(btn => {
+          btn.setAttribute('aria-pressed', btn.dataset.daltonism === prefs.daltonism);
+        });
+
+        // 4. Tipografia, Espaçamento, Links, Régua e Cursor
+        htmlEl.classList.toggle('font-hyperlegible', prefs.hyperlegible);
+        document.getElementById('btn-hyperlegible').setAttribute('aria-pressed', prefs.hyperlegible);
+
+        htmlEl.classList.toggle('extra-spacing', prefs.extraSpacing);
+        document.getElementById('btn-spacing').setAttribute('aria-pressed', prefs.extraSpacing);
+
+        htmlEl.classList.toggle('highlight-links', prefs.highlightLinks);
+        document.getElementById('btn-highlight-links').setAttribute('aria-pressed', prefs.highlightLinks);
+
+        htmlEl.classList.toggle('reading-guide-active', prefs.readingGuide);
+        document.getElementById('btn-reading-guide').setAttribute('aria-pressed', prefs.readingGuide);
+
+        htmlEl.classList.toggle('large-cursor', prefs.largeCursor);
+        document.getElementById('btn-large-cursor').setAttribute('aria-pressed', prefs.largeCursor);
+
+        // 5. Configurações de voz
+        document.getElementById('btn-hover-speak').setAttribute('aria-pressed', prefs.hoverSpeak);
+        document.querySelectorAll('.rate-btn').forEach(btn => {
+          btn.setAttribute('aria-pressed', parseFloat(btn.dataset.rate) === prefs.speechRate);
+        });
+
+        savePrefs();
+      }
+
+      // ======================================================================
+      // CONTROLES DE TAMANHO DE FONTE
+      // ======================================================================
+      function changeFontSize(delta) {
+        const newScale = Math.min(200, Math.max(85, prefs.fontScale + delta));
+        if (newScale !== prefs.fontScale) {
+          prefs.fontScale = newScale;
+          applyPreferences();
+          announce(`Tamanho do texto ajustado para ${prefs.fontScale} por cento.`);
+        }
+      }
+
+      document.getElementById('btn-font-increase').addEventListener('click', () => changeFontSize(15));
+      document.getElementById('btn-font-decrease').addEventListener('click', () => changeFontSize(-15));
+      document.getElementById('btn-font-reset').addEventListener('click', () => {
+        prefs.fontScale = 100;
+        applyPreferences();
+        announce('Tamanho do texto restaurado para 100 por cento.');
+      });
+
+      // ======================================================================
+      // CONTROLES DE CONTRASTE, CORES E FILTROS
+      // ======================================================================
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          prefs.theme = btn.dataset.theme;
+          applyPreferences();
+          announce(`Tema alterado para ${btn.textContent.trim()}.`);
+        });
+      });
+
+      document.getElementById('btn-quick-contrast').addEventListener('click', () => {
+        prefs.theme = prefs.theme === 'high-contrast-dark' ? 'default' : 'high-contrast-dark';
+        applyPreferences();
+        announce(prefs.theme === 'high-contrast-dark' ? 'Alto contraste escuro ativado.' : 'Alto contraste desativado.');
+      });
+
+      document.getElementById('btn-grayscale').addEventListener('click', () => {
+        prefs.grayscale = !prefs.grayscale;
+        applyPreferences();
+        announce(prefs.grayscale ? 'Modo escala de cinza ativado.' : 'Modo escala de cinza desativado.');
+      });
+
+      document.querySelectorAll('.daltonism-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          prefs.daltonism = btn.dataset.daltonism;
+          applyPreferences();
+          announce(`Filtro de daltonismo: ${btn.textContent.trim()}.`);
+        });
+      });
+
+      // ======================================================================
+      // CONTROLES DE TIPOGRAFIA, ESPAÇAMENTO, RÉGUA E CURSOR
+      // ======================================================================
+      document.getElementById('btn-hyperlegible').addEventListener('click', () => {
+        prefs.hyperlegible = !prefs.hyperlegible;
+        applyPreferences();
+        announce(prefs.hyperlegible ? 'Fonte hiperlegível para baixa visão ativada.' : 'Fonte padrão restaurada.');
+      });
+
+      document.getElementById('btn-spacing').addEventListener('click', () => {
+        prefs.extraSpacing = !prefs.extraSpacing;
+        applyPreferences();
+        announce(prefs.extraSpacing ? 'Espaçamento ampliado entre linhas e letras ativado.' : 'Espaçamento padrão restaurado.');
+      });
+
+      document.getElementById('btn-highlight-links').addEventListener('click', () => {
+        prefs.highlightLinks = !prefs.highlightLinks;
+        applyPreferences();
+        announce(prefs.highlightLinks ? 'Destaque reforçado de links e botões ativado.' : 'Destaque de links desativado.');
+      });
+
+      document.getElementById('btn-reading-guide').addEventListener('click', () => {
+        prefs.readingGuide = !prefs.readingGuide;
+        applyPreferences();
+        announce(prefs.readingGuide ? 'Régua guia de leitura ativada.' : 'Régua guia de leitura desativada.');
+      });
+
+      document.getElementById('btn-large-cursor').addEventListener('click', () => {
+        prefs.largeCursor = !prefs.largeCursor;
+        applyPreferences();
+        announce(prefs.largeCursor ? 'Cursor ampliado de alto contraste ativado.' : 'Cursor padrão restaurado.');
+      });
+
+      // Movimento da Régua de Leitura com Mouse e Toque
+      const readingGuideEl = document.getElementById('reading-guide');
+      window.addEventListener('mousemove', (e) => {
+        if (prefs.readingGuide) {
+          readingGuideEl.style.top = `${e.clientY}px`;
+        }
+      });
+      window.addEventListener('touchmove', (e) => {
+        if (prefs.readingGuide && e.touches.length > 0) {
+          readingGuideEl.style.top = `${e.touches[0].clientY}px`;
+        }
+      }, { passive: true });
+
+      // ======================================================================
+      // EXPANDIR / RECOLHER BARRA AVANÇADA
+      // ======================================================================
+      const toggleToolbarBtn = document.getElementById('btn-toggle-toolbar');
+      const advancedPanel = document.getElementById('toolbar-advanced-panel');
+      const toolbarChevron = document.getElementById('toolbar-chevron');
+
+      toggleToolbarBtn.addEventListener('click', () => {
+        const isExpanded = toggleToolbarBtn.getAttribute('aria-expanded') === 'true';
+        toggleToolbarBtn.setAttribute('aria-expanded', !isExpanded);
+        advancedPanel.classList.toggle('hidden', isExpanded);
+        toolbarChevron.classList.toggle('rotate-180', !isExpanded);
+      });
+
+      // ======================================================================
+      // LEITOR DE VOZ (WEB SPEECH API EM PORTUGUÊS)
+      // ======================================================================
+      const synth = window.speechSynthesis;
+      let isSpeakingPage = false;
+      let currentHighlightedEl = null;
+
+      function clearSpeechHighlight() {
+        if (currentHighlightedEl) {
+          currentHighlightedEl.classList.remove('tts-speaking-highlight');
+          currentHighlightedEl = null;
+        }
+      }
+
+      function speakText(text, targetElement = null) {
+        if (!synth) {
+          announce('Seu navegador não suporta síntese de voz.');
+          return;
+        }
+        synth.cancel();
+        clearSpeechHighlight();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'pt-BR';
+        utterance.rate = prefs.speechRate;
+
+        if (targetElement) {
+          currentHighlightedEl = targetElement;
+          targetElement.classList.add('tts-speaking-highlight');
+        }
+
+        utterance.onend = () => {
+          clearSpeechHighlight();
+          if (isSpeakingPage) {
+            isSpeakingPage = false;
+            updateTtsButtonState();
+          }
+        };
+
+        utterance.onerror = () => {
+          clearSpeechHighlight();
+          isSpeakingPage = false;
+          updateTtsButtonState();
+        };
+
+        synth.speak(utterance);
+      }
+
+      function updateTtsButtonState() {
+        const btn = document.getElementById('btn-tts-toggle');
+        const label = document.getElementById('tts-btn-label');
+        btn.setAttribute('aria-pressed', isSpeakingPage);
+        label.textContent = isSpeakingPage ? 'Parar Leitura' : 'Ouvir Página';
+      }
+
+      function toggleFullPageSpeech() {
+        if (!synth) return;
+        if (isSpeakingPage || synth.speaking) {
+          synth.cancel();
+          clearSpeechHighlight();
+          isSpeakingPage = false;
+          updateTtsButtonState();
+          announce('Leitura em voz alta interrompida.');
+        } else {
+          const mainText = document.getElementById('conteudo-principal').innerText;
+          isSpeakingPage = true;
+          updateTtsButtonState();
+          speakText(mainText);
+        }
+      }
+
+      document.getElementById('btn-tts-toggle').addEventListener('click', toggleFullPageSpeech);
+
+      document.getElementById('btn-hero-listen').addEventListener('click', () => {
+        const heroSection = document.querySelector('#conteudo-principal section');
+        speakText(heroSection.innerText, heroSection);
+      });
+
+      // Botões individuais de ouvir cada card
+      document.querySelectorAll('.speak-section-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const article = btn.closest('article');
+          const title = article.querySelector('h3').innerText;
+          const desc = article.querySelector('p').innerText;
+          speakText(`${title}. ${desc}`, article);
+        });
+      });
+
+      // Modo "Ler ao Focar ou Passar o Mouse"
+      document.getElementById('btn-hover-speak').addEventListener('click', () => {
+        prefs.hoverSpeak = !prefs.hoverSpeak;
+        applyPreferences();
+        announce(prefs.hoverSpeak ? 'Modo ler ao focar ou passar o mouse ativado.' : 'Modo ler ao focar desativado.');
+        if (!prefs.hoverSpeak && synth) {
+          synth.cancel();
+          clearSpeechHighlight();
+        }
+      });
+
+      let hoverTimeout = null;
+      document.body.addEventListener('mouseover', (e) => {
+        if (!prefs.hoverSpeak || isSpeakingPage) return;
+        const target = e.target.closest('p, h1, h2, h3, a, button, label, td, th');
+        if (target && target.innerText.trim().length > 1) {
+          clearTimeout(hoverTimeout);
+          hoverTimeout = setTimeout(() => {
+            speakText(target.innerText.trim(), target);
+          }, 350);
+        }
+      });
+
+      document.body.addEventListener('focusin', (e) => {
+        if (!prefs.hoverSpeak || isSpeakingPage) return;
+        const target = e.target;
+        const labelText = target.getAttribute('aria-label') || target.innerText || target.placeholder;
+        if (labelText && labelText.trim().length > 0) {
+          speakText(labelText.trim(), target);
+        }
+      });
+
+      // Velocidade da fala
+      document.querySelectorAll('.rate-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          prefs.speechRate = parseFloat(btn.dataset.rate);
+          applyPreferences();
+          announce(`Velocidade da fala ajustada para ${btn.textContent.trim()}.`);
+        });
+      });
+
+      // ======================================================================
+      // BOTÃO RESETAR TUDO
+      // ======================================================================
+      document.getElementById('btn-reset-all').addEventListener('click', () => {
+        if (synth) synth.cancel();
+        clearSpeechHighlight();
+        isSpeakingPage = false;
+        updateTtsButtonState();
+        prefs = { ...defaultPrefs };
+        applyPreferences();
+        announce('Todas as preferências de acessibilidade foram restauradas para o padrão.');
+      });
+
+      // ======================================================================
+      // ATALHOS DE TECLADO GLOBAIS (ALT + TECLA)
+      // ======================================================================
+      document.addEventListener('keydown', (e) => {
+        if (!e.altKey) return;
+        const key = e.key.toLowerCase();
+
+        if (key === '1') {
+          e.preventDefault();
+          const main = document.getElementById('conteudo-principal');
+          main.focus();
+          announce('Foco movido para o conteúdo principal.');
+        } else if (key === '2') {
+          e.preventDefault();
+          document.getElementById('btn-font-decrease').focus();
+          announce('Foco movido para a barra de acessibilidade.');
+        } else if (key === 'c') {
+          e.preventDefault();
+          document.getElementById('btn-quick-contrast').click();
+        } else if (key === 'l') {
+          e.preventDefault();
+          toggleFullPageSpeech();
+        } else if (key === '+' || key === '=') {
+          e.preventDefault();
+          changeFontSize(15);
+        } else if (key === '-') {
+          e.preventDefault();
+          changeFontSize(-15);
+        } else if (key === 'r') {
+          e.preventDefault();
+          document.getElementById('btn-reading-guide').click();
+        }
+      });
+
+      // ======================================================================
+      // SIMULADOR INTERATIVO DE CONTRASTE WCAG 2.2
+      // ======================================================================
+      const fgColorInput = document.getElementById('input-fg-color');
+      const fgHexInput = document.getElementById('input-fg-hex');
+      const bgColorInput = document.getElementById('input-bg-color');
+      const bgHexInput = document.getElementById('input-bg-hex');
+      const previewBox = document.getElementById('contrast-preview-box');
+      const ratioValueEl = document.getElementById('contrast-ratio-value');
+      const normalBadgeEl = document.getElementById('wcag-normal-badge');
+      const largeBadgeEl = document.getElementById('wcag-large-badge');
+
+      function hexToRgb(hex) {
+        const cleanHex = hex.replace('#', '');
+        if (cleanHex.length !== 6) return null;
+        const num = parseInt(cleanHex, 16);
+        if (isNaN(num)) return null;
+        return {
+          r: (num >> 16) & 255,
+          g: (num >> 8) & 255,
+          b: num & 255
+        };
+      }
+
+      function getLuminance({ r, g, b }) {
+        const [rs, gs, bs] = [r, g, b].map(c => {
+          const s = c / 255;
+          return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+      }
+
+      function updateContrastSimulator(fgHex, bgHex) {
+        const fgRgb = hexToRgb(fgHex);
+        const bgRgb = hexToRgb(bgHex);
+        if (!fgRgb || !bgRgb) return;
+
+        previewBox.style.color = fgHex;
+        previewBox.style.backgroundColor = bgHex;
+
+        const lum1 = getLuminance(fgRgb);
+        const lum2 = getLuminance(bgRgb);
+        const brightest = Math.max(lum1, lum2);
+        const darkest = Math.min(lum1, lum2);
+        const ratio = (brightest + 0.05) / (darkest + 0.05);
+
+        ratioValueEl.textContent = `${ratio.toFixed(2)} : 1`;
+
+        // Avaliação Texto Normal (AAA >= 7.0, AA >= 4.5)
+        if (ratio >= 7.0) {
+          normalBadgeEl.textContent = 'APROVADO AAA (≥ 7:1)';
+          normalBadgeEl.className = 'inline-block mt-1 px-3 py-1 rounded-lg font-extrabold text-sm bg-emerald-700 text-white';
+        } else if (ratio >= 4.5) {
+          normalBadgeEl.textContent = 'APROVADO AA (≥ 4.5:1)';
+          normalBadgeEl.className = 'inline-block mt-1 px-3 py-1 rounded-lg font-extrabold text-sm bg-amber-600 text-white';
+        } else {
+          normalBadgeEl.textContent = 'REPROVADO (< 4.5:1)';
+          normalBadgeEl.className = 'inline-block mt-1 px-3 py-1 rounded-lg font-extrabold text-sm bg-red-700 text-white';
+        }
+
+        // Avaliação Texto Grande (AAA >= 4.5, AA >= 3.0)
+        if (ratio >= 4.5) {
+          largeBadgeEl.textContent = 'APROVADO AAA (≥ 4.5:1)';
+          largeBadgeEl.className = 'inline-block mt-1 px-3 py-1 rounded-lg font-extrabold text-sm bg-emerald-700 text-white';
+        } else if (ratio >= 3.0) {
+          largeBadgeEl.textContent = 'APROVADO AA (≥ 3:1)';
+          largeBadgeEl.className = 'inline-block mt-1 px-3 py-1 rounded-lg font-extrabold text-sm bg-amber-600 text-white';
+        } else {
+          largeBadgeEl.textContent = 'REPROVADO (< 3:1)';
+          largeBadgeEl.className = 'inline-block mt-1 px-3 py-1 rounded-lg font-extrabold text-sm bg-red-700 text-white';
+        }
+      }
+
+      fgColorInput.addEventListener('input', (e) => {
+        fgHexInput.value = e.target.value.toUpperCase();
+        updateContrastSimulator(fgHexInput.value, bgHexInput.value);
+      });
+
+      bgColorInput.addEventListener('input', (e) => {
+        bgHexInput.value = e.target.value.toUpperCase();
+        updateContrastSimulator(fgHexInput.value, bgHexInput.value);
+      });
+
+      fgHexInput.addEventListener('input', (e) => {
+        const val = e.target.value;
+        if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+          fgColorInput.value = val;
+          updateContrastSimulator(val, bgHexInput.value);
+        }
+      });
+
+      bgHexInput.addEventListener('input', (e) => {
+        const val = e.target.value;
+        if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+          bgColorInput.value = val;
+          updateContrastSimulator(fgHexInput.value, val);
+        }
+      });
+
+      document.getElementById('btn-swap-colors').addEventListener('click', () => {
+        const temp = fgHexInput.value;
+        fgHexInput.value = bgHexInput.value;
+        fgColorInput.value = bgHexInput.value;
+        bgHexInput.value = temp;
+        bgColorInput.value = temp;
+        updateContrastSimulator(fgHexInput.value, bgHexInput.value);
+        announce('Cores do simulador invertidas.');
+      });
+
+      document.querySelectorAll('.preset-contrast-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const fg = btn.dataset.presetFg;
+          const bg = btn.dataset.presetBg;
+          fgHexInput.value = fg;
+          fgColorInput.value = fg;
+          bgHexInput.value = bg;
+          bgColorInput.value = bg;
+          updateContrastSimulator(fg, bg);
+          announce(`Combinação carregada: ${btn.textContent.trim()}.`);
+        });
+      });
+
+      // ======================================================================
+      // VALIDAÇÃO ACESSÍVEL DO FORMULÁRIO DE FEEDBACK + FEEDBACK SONORO
+      // ======================================================================
+      const form = document.getElementById('accessible-feedback-form');
+      const statusBox = document.getElementById('form-status-box');
+
+      // Feedback sonoro suave via Web Audio API (sem arquivos externos)
+      function playFeedbackTone(success = true) {
+        try {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          const ctx = new AudioCtx();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(success ? 523.25 : 220, ctx.currentTime); // Dó5 ou Lá3
+          if (success) {
+            osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.12); // Mi5
+          }
+
+          gain.gain.setValueAtTime(0.15, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+
+          osc.start();
+          osc.stop(ctx.currentTime + 0.35);
+        } catch (e) {
+          // Ignora caso o navegador bloqueie áudio automático
+        }
+      }
+
+      function validateField(inputEl, errorEl, condition, errorMsg) {
+        if (!condition) {
+          inputEl.setAttribute('aria-invalid', 'true');
+          errorEl.textContent = errorMsg;
+          errorEl.classList.remove('hidden');
+          return false;
+        } else {
+          inputEl.removeAttribute('aria-invalid');
+          errorEl.textContent = '';
+          errorEl.classList.add('hidden');
+          return true;
+        }
+      }
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const nameInput = document.getElementById('field-name');
+        const emailInput = document.getElementById('field-email');
+        const messageInput = document.getElementById('field-message');
+
+        const isNameValid = validateField(
+          nameInput,
+          document.getElementById('error-name'),
+          nameInput.value.trim().length >= 3,
+          'Erro: Por favor, informe seu nome completo com pelo menos 3 letras.'
+        );
+
+        const isEmailValid = validateField(
+          emailInput,
+          document.getElementById('error-email'),
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim()),
+          'Erro: Por favor, informe um endereço de e-mail válido, como exemplo@dominio.com.'
+        );
+
+        const isMessageValid = validateField(
+          messageInput,
+          document.getElementById('error-message'),
+          messageInput.value.trim().length >= 10,
+          'Erro: Por favor, escreva uma mensagem com pelo menos 10 caracteres.'
+        );
+
+        if (!isNameValid || !isEmailValid || !isMessageValid) {
+          playFeedbackTone(false);
+          statusBox.className = 'p-5 rounded-2xl border-2 font-bold text-lg bg-red-100 text-red-900 border-red-700 block';
+          statusBox.textContent = 'Não foi possível enviar. Verifique os campos destacados com erro acima.';
+          announce('Erro no formulário. Verifique os campos obrigatórios.');
+         
+          // Move o foco para o primeiro campo inválido
+          const firstInvalid = form.querySelector('[aria-invalid="true"]');
+          if (firstInvalid) firstInvalid.focus();
+          return;
+        }
+
+        // Sucesso no envio
+        playFeedbackTone(true);
+        statusBox.className = 'p-5 rounded-2xl border-2 font-bold text-lg bg-emerald-100 text-emerald-950 border-emerald-700 block';
+        statusBox.textContent = `Obrigado, ${nameInput.value.trim()}! Seu feedback de acessibilidade foi enviado com sucesso.`;
+        announce(statusBox.textContent);
+        form.reset();
+      });
+
+      // Inicializar preferências salvas ao carregar a página
+      applyPreferences();
+      updateContrastSimulator('#FFFF00', '#000000');
+    });
+  </script>
+</body>
+</html>
